@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Coding — APEX4 Unyleya</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:    #0B1F14;
+    --mid:     #163929;
+    --leaf:    #2D6A4F;
+    --mint:    #40916C;
+    --sage:    #74C69D;
+    --glow:    #95D5B2;
+    --cream:   #D8F3DC;
+    --white:   #F8FFF9;
+    --red:     #8B1A1A;
+    --orange:  #C05621;
+    --code-bg: #080F0B;
+    --mono:    'Space Mono', monospace;
+    --body:    'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: var(--body);
+    overflow-x: hidden;
+  }
+
+  /* ── Scrollbar ─────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 3px; }
+
+  /* ── Noise overlay ─────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── HERO ──────────────────────────────────── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, #163929 0%, var(--dark) 70%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(64,145,108,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(64,145,108,0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove { from { transform: translateY(0); } to { transform: translateY(48px); } }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .orb1 { width: 400px; height: 400px; top: -100px; right: -100px; background: rgba(45,106,79,0.35); animation-delay: 0s; }
+  .orb2 { width: 300px; height: 300px; bottom: -80px; left: -60px; background: rgba(64,145,108,0.25); animation-delay: 3s; }
+  @keyframes orbFloat { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,-20px) scale(1.05); } }
+
+  .hero-content {
+    position: relative; z-index: 1;
+    text-align: center; max-width: 820px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.35rem 1rem;
+    border: 1px solid var(--mint);
+    border-radius: 99px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--sage);
+    letter-spacing: 0.12em;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-title {
+    font-family: var(--mono);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  .hero-title span { color: var(--sage); }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--glow);
+    font-weight: 300;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn {
+    padding: 0.8rem 2rem; border-radius: 6px;
+    font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.05em;
+    cursor: pointer; border: none; transition: all 0.2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary { background: var(--mint); color: var(--dark); font-weight: 700; }
+  .btn-primary:hover { background: var(--sage); transform: translateY(-2px); }
+  .btn-outline { background: transparent; color: var(--sage); border: 1px solid var(--mint); }
+  .btn-outline:hover { background: rgba(64,145,108,0.15); transform: translateY(-2px); }
+
+  .hero-scroll {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    animation: bounce 2s ease-in-out infinite;
+    color: var(--mint); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+  @keyframes fadeUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── SECTION BASE ───────────────────────────── */
+  section { padding: 6rem 2rem; position: relative; z-index: 1; }
+  .container { max-width: 1080px; margin: 0 auto; }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--mint);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: var(--mono);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--cream);
+  }
+  .section-lead { font-size: 1.05rem; color: var(--glow); font-weight: 300; max-width: 620px; margin-bottom: 3rem; }
+
+  /* ── WHAT IS ────────────────────────────────── */
+  #what { background: var(--mid); }
+  #what::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1.5rem; }
+
+  .card {
+    background: rgba(11,31,20,0.6);
+    border: 1px solid rgba(64,145,108,0.25);
+    border-radius: 12px;
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .card:hover { border-color: var(--mint); transform: translateY(-4px); }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-accent, var(--mint));
+  }
+
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card h3 { font-family: var(--mono); font-size: 1rem; color: var(--cream); margin-bottom: 0.75rem; }
+  .card p { font-size: 0.95rem; color: #9DC4AA; line-height: 1.65; }
+
+  .stat-highlight {
+    font-family: var(--mono);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--sage);
+    display: block;
+    margin: 1rem 0 0.3rem;
+  }
+  .stat-label { font-size: 0.85rem; color: #7A9F87; }
+
+  /* ── BATTLE ──────────────────────────────────── */
+  #battle { background: var(--dark); }
+
+  .battle-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+  }
+
+  .vs-badge {
+    background: var(--code-bg);
+    border: 2px solid var(--mint);
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--mint);
+    flex-shrink: 0;
+  }
+
+  .code-arena {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 720px) { .code-arena { grid-template-columns: 1fr; } }
+
+  .code-panel {
+    background: var(--code-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(64,145,108,0.2);
+    transition: border-color 0.3s;
+  }
+  .code-panel.bad  { border-color: rgba(139,26,26,0.5); }
+  .code-panel.good { border-color: rgba(45,106,79,0.5); }
+  .code-panel:hover { border-color: var(--mint); }
+
+  .panel-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid rgba(64,145,108,0.15);
+  }
+  .panel-header.bad-header  { background: rgba(139,26,26,0.35); }
+  .panel-header.good-header { background: rgba(45,106,79,0.35); }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-red    { background: #E06C75; }
+  .dot-green  { background: #98C379; }
+
+  .panel-title { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; }
+  .panel-title.bad  { color: #E06C75; }
+  .panel-title.good { color: #98C379; }
+
+  .code-block {
+    padding: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #ABB2BF;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .cm  { color: #5C6370; font-style: italic; }
+  .ck  { color: #C678DD; }
+  .cs  { color: #98C379; }
+  .cn  { color: #E5C07B; }
+  .ct  { color: #61AFEF; }
+  .cop { color: #ABB2BF; }
+
+  .metrics-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+  }
+  .metric {
+    background: var(--code-bg);
+    border-radius: 10px;
+    padding: 1.2rem;
+    border: 1px solid rgba(64,145,108,0.18);
+    text-align: center;
+  }
+  .metric-val {
+    font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+    display: block; margin-bottom: 0.25rem;
+  }
+  .metric-val.bad  { color: #E06C75; }
+  .metric-val.good { color: #98C379; }
+  .metric-desc { font-size: 0.8rem; color: #7A9F87; }
+
+  /* ── COMPLEXITY VISUALIZER ──────────────────── */
+  #visual { background: var(--mid); }
+  #visual::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  }
+
+  .chart-wrapper {
+    background: var(--code-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid rgba(64,145,108,0.2);
+    position: relative;
+  }
+
+  .chart-controls {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center;
+  }
+  .chart-controls label { font-size: 0.85rem; color: var(--sage); font-family: var(--mono); }
+
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 200px; height: 4px;
+    background: rgba(64,145,108,0.3);
+    border-radius: 2px; outline: none; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    background: var(--mint); border-radius: 50%;
+  }
+
+  #n-display {
+    font-family: var(--mono); font-size: 1rem; color: var(--sage);
+    min-width: 3rem;
+  }
+
+  canvas { width: 100% !important; border-radius: 8px; }
+
+  .chart-legend {
+    display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: #9DC4AA; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* ── PRINCIPLES ─────────────────────────────── */
+  #principles { background: var(--dark); }
+
+  .principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+
+  .principle-card {
+    display: flex; align-items: flex-start; gap: 1.2rem;
+    background: rgba(22,57,41,0.4);
+    border: 1px solid rgba(64,145,108,0.2);
+    border-radius: 10px; padding: 1.4rem;
+    transition: all 0.25s;
+  }
+  .principle-card:hover { border-color: var(--mint); background: rgba(22,57,41,0.7); transform: translateX(4px); }
+
+  .p-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(64,145,108,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+  }
+  .p-text h4 { font-family: var(--mono); font-size: 0.9rem; color: var(--cream); margin-bottom: 0.4rem; }
+  .p-text p  { font-size: 0.88rem; color: #9DC4AA; line-height: 1.6; }
+
+  /* ── IMPACT ─────────────────────────────────── */
+  #impact { background: var(--mid); }
+  #impact::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  }
+
+  .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+  .impact-card {
+    background: var(--code-bg);
+    border-radius: 12px; padding: 2rem 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(64,145,108,0.18);
+    transition: all 0.3s;
+  }
+  .impact-card:hover { border-color: var(--mint); transform: scale(1.03); }
+  .impact-num {
+    font-family: var(--mono); font-size: 3rem; font-weight: 700;
+    color: var(--sage); display: block; margin-bottom: 0.5rem;
+    animation: countUp 2s ease;
+  }
+  .impact-label { font-size: 0.9rem; color: #9DC4AA; line-height: 1.5; }
+
+  /* ── CTA FINAL ─────────────────────────────── */
+  #cta {
+    background: var(--dark);
+    text-align: center; padding: 8rem 2rem;
+  }
+  #cta .section-title { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+  #cta p { color: var(--glow); margin-bottom: 2.5rem; }
+
+  .quote {
+    font-size: 1.3rem; font-style: italic;
+    color: var(--sage);
+    border-left: 3px solid var(--mint);
+    padding: 1rem 2rem;
+    background: rgba(64,145,108,0.08);
+    border-radius: 0 8px 8px 0;
+    max-width: 640px; margin: 3rem auto 0;
+    text-align: left;
+  }
+
+  /* ── NAV ────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(11,31,20,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(64,145,108,0.15);
+    transition: all 0.3s;
+  }
+
+  .nav-logo { font-family: var(--mono); font-weight: 700; color: var(--sage); font-size: 0.95rem; text-decoration: none; }
+  .nav-logo span { color: var(--mint); }
+
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+  .nav-links a { font-size: 0.82rem; color: #9DC4AA; text-decoration: none; font-family: var(--mono); transition: color 0.2s; }
+  .nav-links a:hover { color: var(--sage); }
+
+  @media (max-width: 600px) { .nav-links { display: none; } }
+
+  /* ── SCROLL REVEAL ──────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── COMPARISON TABLE ───────────────────────── */
+  .compare-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+  .compare-table th, .compare-table td {
+    padding: 0.85rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(64,145,108,0.15);
+    font-size: 0.9rem;
+  }
+  .compare-table th { font-family: var(--mono); font-size: 0.82rem; color: var(--mint); letter-spacing: 0.05em; }
+  .compare-table tbody tr:hover { background: rgba(64,145,108,0.07); }
+  .bad-val  { color: #E06C75; font-family: var(--mono); }
+  .good-val { color: #98C379; font-family: var(--mono); }
+  .neutral  { color: var(--glow); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero"><span>&lt;</span>Green<span>/&gt;</span></a>
+  <ul class="nav-links">
+    <li><a href="#what">Conceito</a></li>
+    <li><a href="#battle">O Problema</a></li>
+    <li><a href="#visual">Visualizador</a></li>
+    <li><a href="#principles">Princípios</a></li>
+    <li><a href="#impact">Impacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+
+  <div class="hero-content">
+    <div class="badge">APEX4 — UNYLEYA · 2026</div>
+    <h1 class="hero-title">Green<br><span>Coding</span></h1>
+    <p class="hero-sub">Programação sustentável: o código que respeita o planeta.</p>
+    <div class="hero-cta">
+      <a href="#what" class="btn btn-primary">Explorar →</a>
+      <a href="#battle" class="btn btn-outline">Ver o Código</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>scroll</span>
+    <svg width="14" height="20" viewBox="0 0 14 20" fill="none"><rect x="1" y="1" width="12" height="18" rx="6" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="6" r="2" fill="currentColor"><animate attributeName="cy" values="6;13;6" dur="1.8s" repeatCount="indefinite"/></circle></svg>
+  </div>
+</section>
+
+<!-- WHAT IS GREEN CODING -->
+<section id="what">
+  <div class="container">
+    <p class="section-tag reveal">// conceito</p>
+    <h2 class="section-title reveal">O que é Green Coding?</h2>
+    <p class="section-lead reveal">Praticar Green Coding significa escrever software que entrega os mesmos resultados consumindo menos CPU, memória e energia — reduzindo diretamente as emissões de carbono dos servidores.</p>
+
+    <div class="card-grid">
+      <div class="card reveal" style="--card-accent: var(--mint)">
+        <div class="card-icon">🌱</div>
+        <h3>Definição</h3>
+        <p>Conjunto de práticas de desenvolvimento focadas em eficiência energética ao longo de todo o ciclo de vida do código.</p>
+      </div>
+      <div class="card reveal" style="--card-accent: #C05621">
+        <div class="card-icon">⚡</div>
+        <h3>O Problema Global</h3>
+        <p>O setor de TI representa <strong style="color:var(--sage)">2–4%</strong> das emissões globais de CO₂ — equivalente à aviação civil inteira. Algoritmos ineficientes contribuem significativamente.</p>
+      </div>
+      <div class="card reveal" style="--card-accent: #2563EB">
+        <div class="card-icon">💡</div>
+        <h3>A Responsabilidade</h3>
+        <p>Todo desenvolvedor que escolhe o algoritmo certo está tomando uma decisão ambiental — sem custo extra, apenas com conhecimento.</p>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1rem; margin-top:2.5rem;">
+      <div class="card reveal" style="--card-accent:var(--sage); text-align:center; padding:2rem 1.5rem">
+        <span class="stat-highlight">2–4%</span>
+        <span class="stat-label">das emissões globais de CO₂ vêm da TI</span>
+      </div>
+      <div class="card reveal" style="--card-accent:var(--sage); text-align:center; padding:2rem 1.5rem">
+        <span class="stat-highlight">100k</span>
+        <span class="stat-label">registros: 10 bilhões vs. 100 mil operações</span>
+      </div>
+      <div class="card reveal" style="--card-accent:var(--sage); text-align:center; padding:2rem 1.5rem">
+        <span class="stat-highlight">100x</span>
+        <span class="stat-label">menos energia com o algoritmo correto</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BATTLE: CÓDIGO POLUENTE vs SUSTENTÁVEL -->
+<section id="battle">
+  <div class="container">
+    <p class="section-tag reveal">// exemplo prático</p>
+    <h2 class="section-title reveal">O Confronto</h2>
+    <p class="section-lead reveal">Verificar nomes duplicados em 100.000 registros. Duas abordagens, impactos radicalmente diferentes.</p>
+
+    <div class="battle-header reveal">
+      <div>
+        <span style="font-family:var(--mono);color:#E06C75;font-size:0.9rem">❌ Código Poluente</span>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div style="text-align:right">
+        <span style="font-family:var(--mono);color:#98C379;font-size:0.9rem">✅ Green Coding</span>
+      </div>
+    </div>
+
+    <div class="code-arena reveal">
+      <!-- BAD -->
+      <div class="code-panel bad">
+        <div class="panel-header bad-header">
+          <div class="dot dot-red"></div>
+          <span class="panel-title bad">O(n²) — Força Bruta</span>
+        </div>
+        <div class="code-block"><span class="cm">// O famoso O(n²) — Stress total de CPU</span>
+<span class="ck">for</span> (<span class="ct">String</span> nome1 : listaGigante) {
+    <span class="ck">for</span> (<span class="ct">String</span> nome2 : listaGigante) {
+        <span class="ck">if</span> (nome1.<span class="cn">equals</span>(nome2)) {
+            <span class="cm">// processa duplicado</span>
+        }
+    }
+}</div>
+      </div>
+
+      <!-- GOOD -->
+      <div class="code-panel good">
+        <div class="panel-header good-header">
+          <div class="dot dot-green"></div>
+          <span class="panel-title good">O(n) — Green Coding</span>
+        </div>
+        <div class="code-block"><span class="cm">// O(n) — Eficiência energética</span>
+<span class="ct">Set</span>&lt;<span class="ct">String</span>&gt; nomesUnicos = <span class="ck">new</span> <span class="ct">HashSet</span>&lt;&gt;();
+
+<span class="ck">for</span> (<span class="ct">String</span> nome : listaGigante) {
+    <span class="ck">if</span> (!nomesUnicos.<span class="cn">add</span>(nome)) {
+        <span class="cm">// processa duplicado</span>
+    }
+}</div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row reveal">
+      <div class="metric">
+        <span class="metric-val bad">10 bilhões</span>
+        <span class="metric-desc">comparações com O(n²) em 100k registros</span>
+      </div>
+      <div class="metric">
+        <span class="metric-val good">100 mil</span>
+        <span class="metric-desc">operações com O(n) para o mesmo resultado</span>
+      </div>
+    </div>
+    <div class="metrics-row reveal" style="margin-top:0">
+      <div class="metric">
+        <span class="metric-val bad">Minutos</span>
+        <span class="metric-desc">tempo de execução do código poluente</span>
+      </div>
+      <div class="metric">
+        <span class="metric-val good">Milissegundos</span>
+        <span class="metric-desc">tempo de execução do Green Code</span>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="reveal" style="overflow-x:auto">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Critério</th>
+            <th>O(n²) — Poluente</th>
+            <th>O(n) — Green</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Comparações (100k registros)</td><td class="bad-val">~10 bilhões</td><td class="good-val">~100 mil</td></tr>
+          <tr><td>Tempo de execução</td><td class="bad-val">Minutos</td><td class="good-val">Milissegundos</td></tr>
+          <tr><td>Uso de CPU</td><td class="bad-val">🔥 Máximo</td><td class="good-val">✅ Mínimo</td></tr>
+          <tr><td>Consumo de energia</td><td class="bad-val">⚡ Alto</td><td class="good-val">🌱 Baixo</td></tr>
+          <tr><td>Emissão de carbono</td><td class="bad-val">💨 Elevada</td><td class="good-val">🌿 Reduzida</td></tr>
+          <tr><td>Escalabilidade</td><td class="bad-val">❌ Péssima</td><td class="good-val">✅ Excelente</td></tr>
+          <tr><td>Legibilidade</td><td class="neutral">Média</td><td class="good-val">✅ Clara</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLEXITY VISUALIZER -->
+<section id="visual">
+  <div class="container">
+    <p class="section-tag reveal">// visualizador interativo</p>
+    <h2 class="section-title reveal">Crescimento das Operações</h2>
+    <p class="section-lead reveal">Arraste o slider para ver como as operações crescem conforme a lista aumenta. A diferença é dramática.</p>
+
+    <div class="chart-wrapper reveal">
+      <div class="chart-controls">
+        <label for="slider">Tamanho da lista (n):</label>
+        <input type="range" id="slider" min="100" max="10000" value="1000" step="100">
+        <span id="n-display">1.000</span>
+      </div>
+      <canvas id="chart" height="320"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#E06C75"></div>
+          <span>O(n²) — Código Poluente</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#98C379"></div>
+          <span>O(n) — Green Coding</span>
+        </div>
+      </div>
+      <div id="ops-display" style="margin-top:1.2rem; display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:center;">
+        <div>
+          <span id="bad-ops" style="font-family:var(--mono);font-size:1.3rem;color:#E06C75;display:block"></span>
+          <span style="font-size:0.78rem;color:#7A9F87">operações O(n²)</span>
+        </div>
+        <div>
+          <span id="good-ops" style="font-family:var(--mono);font-size:1.3rem;color:#98C379;display:block"></span>
+          <span style="font-size:0.78rem;color:#7A9F87">operações O(n)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section id="principles">
+  <div class="container">
+    <p class="section-tag reveal">// boas práticas</p>
+    <h2 class="section-title reveal">Outros Princípios Green Coding</h2>
+    <p class="section-lead reveal">A eficiência energética vai muito além do exemplo dos algoritmos.</p>
+
+    <div class="principles-grid">
+      <div class="principle-card reveal">
+        <div class="p-icon">🗄️</div>
+        <div class="p-text"><h4>Cache inteligente</h4><p>Evitar recalcular dados que não mudam. Armazenar resultados e reutilizá-los para eliminar processamento redundante.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">⏳</div>
+        <div class="p-text"><h4>Lazy Loading</h4><p>Carregar somente o que é necessário no momento certo — não tudo de uma vez na inicialização.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">🗃️</div>
+        <div class="p-text"><h4>Queries otimizadas</h4><p>Buscar somente os campos e registros realmente necessários no banco, nunca SELECT * sem necessidade.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">📊</div>
+        <div class="p-text"><h4>Profiling de código</h4><p>Medir onde o programa gasta mais CPU e memória, e otimizar os pontos de maior impacto.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">📦</div>
+        <div class="p-text"><h4>Estruturas corretas</h4><p>Escolher HashMap, TreeSet, ArrayList conforme a operação dominante: acesso, busca ou ordenação.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">🌐</div>
+        <div class="p-text"><h4>Evitar I/O desnecessário</h4><p>Cada leitura de disco e chamada de rede tem custo energético real. Agrupar e minimizar essas operações.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="container">
+    <p class="section-tag reveal">// impacto ambiental</p>
+    <h2 class="section-title reveal">Por que isso importa?</h2>
+    <p class="section-lead reveal">Cada decisão de código, multiplicada por milhões de execuções diárias, tem consequência real no planeta.</p>
+
+    <div class="impact-grid">
+      <div class="impact-card reveal">
+        <span class="impact-num">2–4%</span>
+        <span class="impact-label">das emissões globais de CO₂ vêm do setor de TI — equivalente à aviação civil</span>
+      </div>
+      <div class="impact-card reveal">
+        <span class="impact-num">100x</span>
+        <span class="impact-label">menos energia usando a estrutura de dados correta no lugar da força bruta</span>
+      </div>
+      <div class="impact-card reveal">
+        <span class="impact-num">0 $</span>
+        <span class="impact-label">custo adicional para escrever código eficiente — só requer conhecimento e intenção</span>
+      </div>
+      <div class="impact-card reveal">
+        <span class="impact-num">∞</span>
+        <span class="impact-label">impacto escalável: código eficiente roda bilhões de vezes em servidores ao redor do mundo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <p class="section-tag reveal">// conclusão</p>
+    <h2 class="section-title reveal">Código limpo é código verde.</h2>
+    <p class="reveal">Desenvolvedores têm responsabilidade ambiental a partir do editor de código. Cada algoritmo escolhido é uma decisão energética.</p>
+
+    <div class="quote reveal">
+      "Código limpo não é só legível — é eficiente, sustentável, e deixa o mundo um pouco melhor a cada execução."
+    </div>
+
+    <div style="margin-top:3rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;" class="reveal">
+      <a href="#hero" class="btn btn-primary">↑ Voltar ao início</a>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:0.75rem;color:#3D6B4F;margin-top:4rem;">
+      APEX4 · Unyleya · Green Coding · 2026
+    </p>
+  </div>
+</section>
+
+<script>
+// ── Scroll Reveal ──────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Canvas Chart ──────────────────────────────────
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('slider');
+const nDisplay = document.getElementById('n-display');
+const badOps = document.getElementById('bad-ops');
+const goodOps = document.getElementById('good-ops');
+
+function fmt(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'k';
+  return n.toString();
+}
+
+function drawChart(maxN) {
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.offsetWidth - 64;
+  const H = 280;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  const padL = 60, padR = 20, padT = 20, padB = 40;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // BG
+  ctx.fillStyle = '#080F0B';
+  ctx.fillRect(0, 0, W, H);
+
+  const points = 60;
+  const badData  = [], goodData  = [];
+  const nSquaredMax = maxN * maxN;
+  const yMax = nSquaredMax;
+
+  for (let i = 0; i <= points; i++) {
+    const n = (maxN / points) * i;
+    badData.push({ x: n, y: n * n });
+    goodData.push({ x: n, y: n });
+  }
+
+  const toX = (n) => padL + (n / maxN) * chartW;
+  const toY = (v) => padT + chartH - (v / yMax) * chartH;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(64,145,108,0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    const val = yMax - (yMax / 4) * i;
+    ctx.fillStyle = 'rgba(149,213,178,0.5)';
+    ctx.font = `10px 'Space Mono', monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText(fmt(val), padL - 8, y + 4);
+  }
+
+  // X axis labels
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(149,213,178,0.5)';
+  for (let i = 0; i <= 5; i++) {
+    const n = (maxN / 5) * i;
+    const x = toX(n);
+    ctx.fillText(fmt(n), x, H - padB + 18);
+  }
+
+  // Axes
+  ctx.strokeStyle = 'rgba(64,145,108,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH);
+  ctx.lineTo(padL + chartW, padT + chartH);
+  ctx.stroke();
+
+  // Bad line (O n²)
+  ctx.strokeStyle = '#E06C75';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(224,108,117,0.4)';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  badData.forEach((pt, i) => {
+    const px = toX(pt.x), py = toY(pt.y);
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  });
+  ctx.stroke();
+
+  // Good line (O n)
+  ctx.strokeStyle = '#98C379';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(152,195,121,0.4)';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  goodData.forEach((pt, i) => {
+    const px = toX(pt.x), py = toY(pt.y);
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Marker at maxN
+  const mx = toX(maxN);
+  ctx.strokeStyle = 'rgba(64,145,108,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(mx, padT); ctx.lineTo(mx, padT + chartH); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Update displays
+  const n = maxN;
+  nDisplay.textContent = n.toLocaleString('pt-BR');
+  badOps.textContent  = fmt(n * n) + ' ops';
+  goodOps.textContent = fmt(n) + ' ops';
+}
+
+slider.addEventListener('input', () => drawChart(parseInt(slider.value)));
+drawChart(1000);
+window.addEventListener('resize', () => drawChart(parseInt(slider.value)));
+</script>
+</body>
+</html>
