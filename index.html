@@ -440,9 +440,141 @@
   .bad-val  { color: #E06C75; font-family: var(--mono); }
   .good-val { color: #98C379; font-family: var(--mono); }
   .neutral  { color: var(--glow); font-family: var(--mono); }
+
+  /* ── PROGRESS BAR ───────────────────────────── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; z-index: 200;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--mint), var(--sage), var(--mint));
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+    transition: width 0.08s linear;
+    pointer-events: none;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── BACK TO TOP ────────────────────────────── */
+  #back-top {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 150;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--mint); color: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; cursor: pointer; border: none;
+    box-shadow: 0 4px 20px rgba(64,145,108,0.45);
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.35s, transform 0.35s, background 0.2s;
+  }
+  #back-top.visible { opacity: 1; transform: translateY(0); }
+  #back-top:hover { background: var(--sage); transform: translateY(-2px) scale(1.05); }
+
+  /* ── MOBILE MENU ────────────────────────────── */
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    cursor: pointer; background: none; border: none; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--sage); border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; position: fixed; top: 61px; left: 0; right: 0;
+    background: rgba(11,31,20,0.97); backdrop-filter: blur(16px);
+    padding: 1.5rem 2rem; z-index: 99;
+    border-bottom: 1px solid rgba(64,145,108,0.2);
+    flex-direction: column; gap: 0;
+    animation: slideDown 0.2s ease;
+  }
+  @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--mono); font-size: 0.9rem; color: #9DC4AA;
+    text-decoration: none; padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(64,145,108,0.1);
+    transition: color 0.2s, padding-left 0.2s;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .mobile-menu a::before { content: '//'; font-size: 0.65rem; color: var(--mint); opacity: 0.7; }
+  .mobile-menu a:hover { color: var(--sage); padding-left: 0.4rem; }
+
+  @media (max-width: 720px) {
+    .hamburger { display: flex; }
+    .nav-links  { display: none !important; }
+  }
+
+  /* ── NAV ACTIVE LINK ────────────────────────── */
+  .nav-links a.active { color: var(--sage); }
+  .nav-links a.active::after {
+    content: ''; display: block;
+    height: 2px; background: var(--mint); border-radius: 1px;
+    margin-top: 3px;
+  }
+
+  /* ── TIMELINE ───────────────────────────────── */
+  #timeline { background: var(--dark); }
+  #timeline::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #C05621, transparent);
+  }
+
+  .timeline-track {
+    position: relative; padding-left: 2.5rem; margin-top: 2.5rem;
+  }
+  .timeline-track::before {
+    content: ''; position: absolute; left: 3px; top: 8px; bottom: 8px; width: 2px;
+    background: linear-gradient(180deg, var(--mint) 0%, rgba(64,145,108,0.15) 100%);
+  }
+  .tl-item {
+    position: relative; padding-bottom: 2.5rem;
+  }
+  .tl-dot {
+    position: absolute; left: -2.5rem; top: 5px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--mint); border: 2px solid var(--dark);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.25);
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+  .tl-item:hover .tl-dot { box-shadow: 0 0 0 7px rgba(64,145,108,0.2); transform: scale(1.2); }
+  .tl-year {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--mint);
+    letter-spacing: 0.14em; margin-bottom: 0.3rem; text-transform: uppercase;
+  }
+  .tl-title {
+    font-family: var(--mono); font-size: 1rem; color: var(--cream);
+    margin-bottom: 0.45rem; font-weight: 700;
+  }
+  .tl-body { font-size: 0.92rem; color: #9DC4AA; line-height: 1.7; max-width: 640px; }
+  .tl-tag {
+    display: inline-block; margin-top: 0.6rem;
+    padding: 0.2rem 0.7rem; border-radius: 99px;
+    font-family: var(--mono); font-size: 0.67rem; letter-spacing: 0.09em;
+    border: 1px solid rgba(64,145,108,0.3); color: var(--sage);
+    background: rgba(64,145,108,0.07);
+  }
 </style>
 </head>
 <body>
+
+<!-- Progress bar -->
+<div id="progress-bar"></div>
+
+<!-- Back to top -->
+<button id="back-top" aria-label="Voltar ao topo" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#what"       onclick="closeMobileMenu()">Conceito</a>
+  <a href="#battle"     onclick="closeMobileMenu()">Código</a>
+  <a href="#visual"     onclick="closeMobileMenu()">Visualizador</a>
+  <a href="#principles" onclick="closeMobileMenu()">Princípios</a>
+  <a href="#challenges" onclick="closeMobileMenu()">Desafios</a>
+  <a href="#impact"     onclick="closeMobileMenu()">Impacto</a>
+</div>
+
 
 <!-- NAV -->
 <nav>
@@ -452,8 +584,10 @@
     <li><a href="#battle">O Problema</a></li>
     <li><a href="#visual">Visualizador</a></li>
     <li><a href="#principles">Princípios</a></li>
+    <li><a href="#challenges">Desafios</a></li>
     <li><a href="#impact">Impacto</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- HERO -->
@@ -487,27 +621,33 @@
     <p class="section-lead reveal">Praticar Green Coding significa escrever software que entrega os mesmos resultados consumindo menos CPU, memória e energia — reduzindo diretamente as emissões de carbono dos servidores.</p>
 
     <div class="card-grid">
+      <!-- DEFINIÇÃO -->
       <div class="card reveal" style="--card-accent: var(--mint)">
         <div class="card-icon">🌱</div>
         <h3>Definição</h3>
-        <p>Conjunto de práticas de desenvolvimento focadas em eficiência energética ao longo de todo o ciclo de vida do código.</p>
+        <p>Conjunto de práticas de desenvolvimento focadas em <strong style="color:var(--sage)">eficiência energética</strong> e uso consciente de recursos ao longo de todo o ciclo de vida do software.</p>
+        <p style="margin-top:0.8rem; color:#7A9F87; font-size:0.88rem;">Envolve otimizar algoritmos, reduzir consumo de CPU, memória e rede, e tomar decisões arquiteturais que minimizem desperdício computacional — entregando o mesmo resultado com menor consumo de energia.</p>
       </div>
+      <!-- PROBLEMA GLOBAL -->
       <div class="card reveal" style="--card-accent: #C05621">
         <div class="card-icon">⚡</div>
         <h3>O Problema Global</h3>
-        <p>O setor de TI representa <strong style="color:var(--sage)">2–4%</strong> das emissões globais de CO₂ — equivalente à aviação civil inteira. Algoritmos ineficientes contribuem significativamente.</p>
+        <p>Segundo a <strong style="color:var(--sage)">Agência Internacional de Energia (IEA)</strong>, o setor de TI responde por <strong style="color:#E06C75">2–4%</strong> das emissões globais de CO₂ — nível comparável ao da aviação civil.</p>
+        <p style="margin-top:0.8rem; color:#7A9F87; font-size:0.88rem;">Com o crescimento de cloud computing, streaming e inteligência artificial, esse impacto aumenta. O treinamento de modelos de IA, por exemplo, pode consumir quantidades massivas de energia. E além da infraestrutura, algoritmos mal otimizados elevam o consumo sem gerar mais valor.</p>
       </div>
+      <!-- RESPONSABILIDADE -->
       <div class="card reveal" style="--card-accent: #2563EB">
         <div class="card-icon">💡</div>
         <h3>A Responsabilidade</h3>
-        <p>Todo desenvolvedor que escolhe o algoritmo certo está tomando uma decisão ambiental — sem custo extra, apenas com conhecimento.</p>
+        <p>Todo desenvolvedor que escolhe o algoritmo e a arquitetura corretos está tomando uma <strong style="color:var(--sage)">decisão ambiental</strong>.</p>
+        <p style="margin-top:0.8rem; color:#7A9F87; font-size:0.88rem;">Pequenas escolhas — evitar processamento desnecessário, reduzir chamadas de rede, usar estruturas de dados eficientes — podem diminuir significativamente o consumo de energia, sem custo adicional. Na prática: fazer mais com menos.</p>
       </div>
     </div>
 
     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1rem; margin-top:2.5rem;">
       <div class="card reveal" style="--card-accent:var(--sage); text-align:center; padding:2rem 1.5rem">
         <span class="stat-highlight">2–4%</span>
-        <span class="stat-label">das emissões globais de CO₂ vêm da TI</span>
+        <span class="stat-label">das emissões globais de CO₂ vêm do setor de TI <em style="display:block;margin-top:0.3rem;font-size:0.75rem;color:#4A7A5A">fonte: IEA</em></span>
       </div>
       <div class="card reveal" style="--card-accent:var(--sage); text-align:center; padding:2rem 1.5rem">
         <span class="stat-highlight">100k</span>
@@ -660,8 +800,8 @@
 <section id="principles">
   <div class="container">
     <p class="section-tag reveal">// boas práticas</p>
-    <h2 class="section-title reveal">Outros Princípios Green Coding</h2>
-    <p class="section-lead reveal">A eficiência energética vai muito além do exemplo dos algoritmos.</p>
+    <h2 class="section-title reveal">Princípios Green Coding</h2>
+    <p class="section-lead reveal">A eficiência energética vai muito além da escolha do algoritmo — ela permeia cada decisão de arquitetura e desenvolvimento.</p>
 
     <div class="principles-grid">
       <div class="principle-card reveal">
@@ -674,7 +814,7 @@
       </div>
       <div class="principle-card reveal">
         <div class="p-icon">🗃️</div>
-        <div class="p-text"><h4>Queries otimizadas</h4><p>Buscar somente os campos e registros realmente necessários no banco, nunca SELECT * sem necessidade.</p></div>
+        <div class="p-text"><h4>Queries otimizadas</h4><p>Buscar somente os campos e registros realmente necessários no banco, nunca SELECT * sem necessidade. Usar paginação e filtros no banco para evitar trazer dados demais.</p></div>
       </div>
       <div class="principle-card reveal">
         <div class="p-icon">📊</div>
@@ -686,8 +826,157 @@
       </div>
       <div class="principle-card reveal">
         <div class="p-icon">🌐</div>
-        <div class="p-text"><h4>Evitar I/O desnecessário</h4><p>Cada leitura de disco e chamada de rede tem custo energético real. Agrupar e minimizar essas operações.</p></div>
+        <div class="p-text"><h4>Menos requests de rede</h4><p>Cada chamada HTTP ou consulta ao banco tem custo energético real de CPU e rede. Agrupar, cachear e minimizar essas operações.</p></div>
       </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">☁️</div>
+        <div class="p-text"><h4>Otimizar uso de cloud</h4><p>Evitar overprovisioning — alocar somente os recursos necessários. Recursos ociosos em cloud continuam consumindo energia.</p></div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="p-icon">⚙️</div>
+        <div class="p-text"><h4>Paralelismo consciente</h4><p>Escolher bem quando usar paralelismo: ele pode acelerar tarefas pesadas, mas mal aplicado aumenta consumo de CPU e complexidade desnecessariamente.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DESAFIOS DOS PROFISSIONAIS -->
+<section id="challenges" style="background:var(--dark); position:relative;">
+  <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mint),transparent);"></div>
+  <div class="container">
+    <p class="section-tag reveal">// para os profissionais</p>
+    <h2 class="section-title reveal">Desafios de Analistas, Arquitetos e Desenvolvedores</h2>
+    <p class="section-lead reveal">Aplicar Green Coding na prática exige decisões técnicas conscientes em cada camada do sistema — do algoritmo à infraestrutura.</p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:1.5rem;">
+
+      <!-- ALGORITMOS -->
+      <div class="card reveal" style="--card-accent:var(--mint)">
+        <div class="card-icon">🧮</div>
+        <h3>Algoritmos &amp; Estruturas</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem;">
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:var(--mint);font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Escolher algoritmos eficientes — O(n) em vez de O(n²)
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:var(--mint);font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Evitar processamento redundante e loops desnecessários
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:var(--mint);font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Usar estruturas de dados adequadas ao contexto (HashMap, HashSet, TreeSet)
+          </li>
+        </ul>
+      </div>
+
+      <!-- REDE E BANCO -->
+      <div class="card reveal" style="--card-accent:#2563EB">
+        <div class="card-icon">🌐</div>
+        <h3>Rede &amp; Banco de Dados</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem;">
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#60A5FA;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Reduzir chamadas externas — menos requests HTTP desnecessários
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#60A5FA;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Filtros e paginação no banco — evitar trazer dados demais
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#60A5FA;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Cache inteligente para dados que não mudam com frequência
+          </li>
+        </ul>
+      </div>
+
+      <!-- INFRAESTRUTURA E CLOUD -->
+      <div class="card reveal" style="--card-accent:#C05621">
+        <div class="card-icon">☁️</div>
+        <h3>Cloud &amp; Infraestrutura</h3>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-top:.5rem;">
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#F97316;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Otimizar uso de cloud — evitar overprovisioning de recursos ociosos
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#F97316;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Escolher bem quando usar paralelismo — mal aplicado eleva CPU sem necessidade
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:.7rem;font-size:.9rem;color:#9DC4AA;">
+            <span style="color:#F97316;font-family:var(--mono);flex-shrink:0;font-size:.8rem;margin-top:.15rem">→</span>
+            Monitorar e perfilar antes de escalar — medir antes de provisionar mais
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Síntese em destaque -->
+    <div class="reveal" style="margin-top:2.5rem; padding:1.8rem 2rem; background:rgba(22,57,41,0.5); border:1px solid rgba(64,145,108,0.3); border-left:4px solid var(--mint); border-radius:0 10px 10px 0;">
+      <p style="font-family:var(--mono);font-size:0.75rem;color:var(--mint);letter-spacing:.12em;margin-bottom:.6rem;">// SÍNTESE</p>
+      <p style="font-size:1.05rem;color:var(--glow);line-height:1.7;">
+        Na prática, Green Coding significa <strong style="color:var(--cream)">escrever código que faz mais com menos</strong> — reduzindo desperdício computacional e o impacto ambiental das aplicações, sem custo adicional, apenas com conhecimento e intenção.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- TIMELINE: Contexto histórico do impacto de TI -->
+<section id="timeline" style="padding:6rem 2rem;position:relative;z-index:1;">
+  <div class="container">
+    <p class="section-tag reveal">// contexto histórico</p>
+    <h2 class="section-title reveal">A Evolução do Impacto Digital</h2>
+    <p class="section-lead reveal">O crescimento exponencial da TI transformou o setor num dos maiores consumidores de energia do planeta — e a urgência por código eficiente nunca foi tão grande.</p>
+
+    <div class="timeline-track">
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2000s</p>
+        <p class="tl-title">A explosão dos data centers</p>
+        <p class="tl-body">O início dos anos 2000 marcou a proliferação de data centers corporativos. O consumo energético global de servidores dobrou entre 2000 e 2005, impulsionado pelo crescimento da internet e do e-commerce.</p>
+        <span class="tl-tag">Infraestrutura</span>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2010</p>
+        <p class="tl-title">Cloud Computing muda a escala</p>
+        <p class="tl-body">AWS, Azure e Google Cloud democratizaram o acesso a infraestrutura, mas também centralizaram enormes quantidades de processamento. O overprovisioning tornou-se prática comum — recursos alocados, mas inativos, continuam consumindo energia 24/7.</p>
+        <span class="tl-tag">Cloud</span>
+        <span class="tl-tag">Escalabilidade</span>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2015</p>
+        <p class="tl-title">Streaming e mobilidade: dados em fluxo contínuo</p>
+        <p class="tl-body">Plataformas de streaming de vídeo passaram a representar mais de 60% do tráfego global de internet. Cada requisição mal otimizada — buffering desnecessário, chamadas redundantes — multiplica o consumo energético por bilhões de usuários simultâneos.</p>
+        <span class="tl-tag">Rede</span>
+        <span class="tl-tag">Algoritmos</span>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot"></div>
+        <p class="tl-year">2020</p>
+        <p class="tl-title">Inteligência Artificial eleva o consumo a novos patamares</p>
+        <p class="tl-body">O treinamento de modelos de IA de grande escala pode consumir centenas de megawatt-hora em uma única sessão — equivalente ao consumo anual de dezenas de residências. A eficiência dos algoritmos de ML tornou-se diretamente ligada ao impacto ambiental.</p>
+        <span class="tl-tag">IA</span>
+        <span class="tl-tag">Alto impacto</span>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot" style="background:var(--sage);box-shadow:0 0 0 4px rgba(116,198,157,0.3);"></div>
+        <p class="tl-year">HOJE</p>
+        <p class="tl-title">Green Coding: a resposta técnica</p>
+        <p class="tl-body">O setor de TI responde por 2–4% das emissões globais de CO₂ (IEA). A resposta não está apenas em energia renovável — está no próprio código. Desenvolvedores que escolhem algoritmos eficientes, estruturas de dados corretas e arquiteturas conscientes são agentes diretos da sustentabilidade digital.</p>
+        <span class="tl-tag" style="border-color:var(--mint);color:var(--sage)">✓ Green Coding</span>
+      </div>
+
     </div>
   </div>
 </section>
@@ -742,22 +1031,103 @@
 </section>
 
 <script>
+// ── Progress Bar ───────────────────────────────────
+const progressBar = document.getElementById('progress-bar');
+function updateProgress() {
+  const scrolled = window.scrollY;
+  const total    = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
+}
+
+// ── Back to Top ────────────────────────────────────
+const backTop = document.getElementById('back-top');
+function updateBackTop() {
+  backTop.classList.toggle('visible', window.scrollY > 400);
+}
+
+// ── Nav Active Links ───────────────────────────────
+const sections   = document.querySelectorAll('section[id]');
+const navAnchors = document.querySelectorAll('.nav-links a');
+function updateActiveNav() {
+  let current = '';
+  sections.forEach(sec => {
+    if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+  });
+  navAnchors.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+
+// ── Mobile Menu ────────────────────────────────────
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn  = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+// ── Animated Counters ──────────────────────────────
+function animateCounter(el) {
+  if (el.dataset.animated) return;
+  el.dataset.animated = true;
+  const target = el.dataset.target;
+  const isFloat = target.includes('.');
+  const isSpecial = isNaN(parseFloat(target));
+  if (isSpecial) return;
+
+  const end      = parseFloat(target);
+  const duration = 1800;
+  const start    = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease     = 1 - Math.pow(1 - progress, 3);
+    const current  = end * ease;
+    el.textContent = isFloat
+      ? current.toFixed(1) + (el.dataset.suffix || '')
+      : Math.round(current) + (el.dataset.suffix || '');
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) animateCounter(e.target); });
+}, { threshold: 0.5 });
+document.querySelectorAll('.count-up').forEach(el => counterObserver.observe(el));
+
 // ── Scroll Reveal ──────────────────────────────────
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
+const revealObserver = new IntersectionObserver((entries) => {
+  let delay = 0;
+  entries.forEach(e => {
     if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      setTimeout(() => e.target.classList.add('visible'), delay);
+      delay += 90;
     }
   });
-}, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Scroll event hub ───────────────────────────────
+window.addEventListener('scroll', () => {
+  updateProgress();
+  updateBackTop();
+  updateActiveNav();
+}, { passive: true });
+
+updateProgress();
+updateBackTop();
+updateActiveNav();
 
 // ── Canvas Chart ──────────────────────────────────
-const canvas = document.getElementById('chart');
-const ctx = canvas.getContext('2d');
-const slider = document.getElementById('slider');
+const canvas  = document.getElementById('chart');
+const ctx     = canvas.getContext('2d');
+const slider  = document.getElementById('slider');
 const nDisplay = document.getElementById('n-display');
-const badOps = document.getElementById('bad-ops');
+const badOps  = document.getElementById('bad-ops');
 const goodOps = document.getElementById('good-ops');
 
 function fmt(n) {
@@ -769,106 +1139,82 @@ function fmt(n) {
 
 function drawChart(maxN) {
   const dpr = window.devicePixelRatio || 1;
-  const W = canvas.parentElement.offsetWidth - 64;
-  const H = 280;
-  canvas.width = W * dpr;
+  const W   = Math.max(canvas.parentElement.offsetWidth - 64, 200);
+  const H   = 280;
+  canvas.width  = W * dpr;
   canvas.height = H * dpr;
-  canvas.style.width = W + 'px';
+  canvas.style.width  = W + 'px';
   canvas.style.height = H + 'px';
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const padL = 60, padR = 20, padT = 20, padB = 40;
   const chartW = W - padL - padR;
   const chartH = H - padT - padB;
 
   ctx.clearRect(0, 0, W, H);
-
-  // BG
   ctx.fillStyle = '#080F0B';
   ctx.fillRect(0, 0, W, H);
 
-  const points = 60;
-  const badData  = [], goodData  = [];
-  const nSquaredMax = maxN * maxN;
-  const yMax = nSquaredMax;
-
+  const points = 80;
+  const yMax   = maxN * maxN;
+  const badData = [], goodData = [];
   for (let i = 0; i <= points; i++) {
     const n = (maxN / points) * i;
     badData.push({ x: n, y: n * n });
     goodData.push({ x: n, y: n });
   }
 
-  const toX = (n) => padL + (n / maxN) * chartW;
-  const toY = (v) => padT + chartH - (v / yMax) * chartH;
+  const toX = n => padL + (n / maxN) * chartW;
+  const toY = v => padT + chartH - (v / yMax) * chartH;
 
-  // Grid lines
+  // Grid
   ctx.strokeStyle = 'rgba(64,145,108,0.1)';
-  ctx.lineWidth = 1;
+  ctx.lineWidth   = 1;
   for (let i = 0; i <= 4; i++) {
     const y = padT + (chartH / 4) * i;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
-    const val = yMax - (yMax / 4) * i;
-    ctx.fillStyle = 'rgba(149,213,178,0.5)';
-    ctx.font = `10px 'Space Mono', monospace`;
-    ctx.textAlign = 'right';
-    ctx.fillText(fmt(val), padL - 8, y + 4);
+    ctx.fillStyle  = 'rgba(149,213,178,0.45)';
+    ctx.font       = "10px 'Space Mono',monospace";
+    ctx.textAlign  = 'right';
+    ctx.fillText(fmt(yMax - (yMax / 4) * i), padL - 8, y + 4);
   }
-
-  // X axis labels
   ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(149,213,178,0.5)';
+  ctx.fillStyle = 'rgba(149,213,178,0.45)';
   for (let i = 0; i <= 5; i++) {
-    const n = (maxN / 5) * i;
-    const x = toX(n);
-    ctx.fillText(fmt(n), x, H - padB + 18);
+    ctx.fillText(fmt((maxN / 5) * i), toX((maxN / 5) * i), H - padB + 18);
   }
 
   // Axes
-  ctx.strokeStyle = 'rgba(64,145,108,0.3)';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(64,145,108,0.3)'; ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH);
-  ctx.lineTo(padL + chartW, padT + chartH);
+  ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH); ctx.lineTo(padL + chartW, padT + chartH);
   ctx.stroke();
 
-  // Bad line (O n²)
-  ctx.strokeStyle = '#E06C75';
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(224,108,117,0.4)';
-  ctx.shadowBlur = 8;
+  // Bad line
+  ctx.strokeStyle = '#E06C75'; ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(224,108,117,0.45)'; ctx.shadowBlur = 10;
   ctx.beginPath();
-  badData.forEach((pt, i) => {
-    const px = toX(pt.x), py = toY(pt.y);
-    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-  });
+  badData.forEach((pt, i) => { i === 0 ? ctx.moveTo(toX(pt.x), toY(pt.y)) : ctx.lineTo(toX(pt.x), toY(pt.y)); });
   ctx.stroke();
 
-  // Good line (O n)
-  ctx.strokeStyle = '#98C379';
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = 'rgba(152,195,121,0.4)';
-  ctx.shadowBlur = 8;
+  // Good line
+  ctx.strokeStyle = '#98C379'; ctx.lineWidth = 2.5;
+  ctx.shadowColor = 'rgba(152,195,121,0.45)'; ctx.shadowBlur = 10;
   ctx.beginPath();
-  goodData.forEach((pt, i) => {
-    const px = toX(pt.x), py = toY(pt.y);
-    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-  });
+  goodData.forEach((pt, i) => { i === 0 ? ctx.moveTo(toX(pt.x), toY(pt.y)) : ctx.lineTo(toX(pt.x), toY(pt.y)); });
   ctx.stroke();
   ctx.shadowBlur = 0;
 
-  // Marker at maxN
+  // Vertical marker
   const mx = toX(maxN);
-  ctx.strokeStyle = 'rgba(64,145,108,0.4)';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(64,145,108,0.4)'; ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   ctx.beginPath(); ctx.moveTo(mx, padT); ctx.lineTo(mx, padT + chartH); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Update displays
-  const n = maxN;
-  nDisplay.textContent = n.toLocaleString('pt-BR');
-  badOps.textContent  = fmt(n * n) + ' ops';
-  goodOps.textContent = fmt(n) + ' ops';
+  nDisplay.textContent = maxN.toLocaleString('pt-BR');
+  badOps.textContent   = fmt(maxN * maxN) + ' ops';
+  goodOps.textContent  = fmt(maxN) + ' ops';
 }
 
 slider.addEventListener('input', () => drawChart(parseInt(slider.value)));
